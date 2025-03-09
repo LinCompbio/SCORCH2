@@ -1,17 +1,17 @@
 import os
 import pandas as pd
-import binana_accelerate
+import binana
 import random
 from tqdm import tqdm
 import kier
-import ecif_accelerate
+import ecif
 from openbabel import pybel
 from rdkit import Chem, RDLogger
 import json
 import dask.dataframe as dd
 import multiprocessing
 from functools import partial
-from binana_accelerate import PDB
+from binana import PDB
 from multiprocessing import Pool, TimeoutError
 from tqdm import tqdm
 import signal
@@ -30,8 +30,8 @@ pybel.ob.obErrorLog.StopLogging()
 
 
 def calculate_ecifs(ligand_pdbqt_block, receptor_content):
-    ECIF_data = ecif_accelerate.GetECIF(receptor_content, ligand_pdbqt_block, distance_cutoff=6.0)
-    ECIFHeaders = [header.replace(';', '') for header in ecif_accelerate.PossibleECIF]
+    ECIF_data = ecif.GetECIF(receptor_content, ligand_pdbqt_block, distance_cutoff=6.0)
+    ECIFHeaders = [header.replace(';', '') for header in ecif.PossibleECIF]
     ECIF_data = dict(zip(ECIFHeaders, ECIF_data))
     return pd.DataFrame(ECIF_data, index=[0])
 
@@ -87,7 +87,7 @@ def kier_flexibility(ligand_pdbqt_block):
 
 def run_binana(ligand_pdbqt_block, receptor_content):
     binana_features = {}
-    main_binana_out = binana_accelerate.Binana(ligand_pdbqt_block, receptor_content).out
+    main_binana_out = binana.Binana(ligand_pdbqt_block, receptor_content).out
 
     # define the features we want
     keep_closest_contacts = ["2.5 (HD, OA)",
