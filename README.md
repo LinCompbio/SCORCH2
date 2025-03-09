@@ -58,14 +58,16 @@ SC2 combines two XGBoost models with separate normalizer, with the feature gener
 
 ## Retrain the model 
 
-Though we recommend to take official weights since SC2 has already being explored for optimal generalizibility and top enrichment in current scope, but you could run the code below to retrain the model on your own data.
-<pre>
-python xgboost_training.py \
-  --input_dir /path/to/input_ligands \
-  --output_dir /path/to/output_pdbqt \
-  --input_format pdb \
-  --n_proc XX
-</pre>
+Though we recommend taking official weights since SC2 has already been explored for optimal generalizability and top enrichment in current scope, but you could run the code below to retrain the model on your own data.
+
+```bash
+python train_xgboost.py --train_features <path_to_train_features> \
+                        --train_labels <path_to_train_labels> \
+                        --test_features <path_to_test_features> \
+                        --test_labels <path_to_test_labels> \
+                        --output_dir <path_to_output_directory> \
+                        [--n_trials <number_of_trials>]
+```
 
 
 ## Running
