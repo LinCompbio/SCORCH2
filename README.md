@@ -7,7 +7,7 @@
 SCORCH2 (SC2) is a consensus docking pose rescoring ML model for interaction-based virtual screening. SC2 is a continual work build upon SC1 (https://github.com/SMVDGroup/SCORCH/), where two XGBoost models are curated and trained separately to derive optimal knowledge pattern and then merge their result together for top-tier actives enrichment. 
 
 <div style="text-align: center;">
-  <img src="main.png" style="width: 100%;" />
+  <img src="main.png" style="width: 90%;" />
 </div>
 
 ## Dataset
