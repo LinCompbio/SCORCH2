@@ -21,6 +21,8 @@ PDBBind data is from https://www.pdbbind-plus.org.cn
 
 SC2 accepts the same data curation setting in SC1, including `.pdbqt` format input for receptor and ligand, SC2 officially takes [ADFRsuite](https://ccsb.scripps.edu/adfr/downloads/) for format conversion.
 
+Just so you know, SC2 is a rescoring method; the input is hypothesized to be docked poses, and SC2 does not generate the docking poses itself.
+
 🧬 Ligand Batch Conversion to .pdbqt Format
 <pre>
 python receptor_2_pdbqt.py \
@@ -39,9 +41,20 @@ python ligand_2_pdbqt.py \
   --n_proc XX
 </pre>
 
+PS: Adding charges by Openbabel may cause result deviation.
+
 ## Feature extraction
 
+SC2 feature is majorly combined with three parts, BINANA, ECIF, and Rdkit, to extract features for rescoring, run the script below:
+<pre>
+python ligand_2_pdbqt.py \
+  --input_dir /path/to/input_ligands \
+  --output_dir /path/to/output_pdbqt \
+  --input_format pdb \
+  --n_proc XX
+</pre>
 
+PS: The speed for running will depend on the size of the receptor, crop redundant parts will significantly increase the efficiency.
 
 ## Running
 
