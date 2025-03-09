@@ -94,9 +94,9 @@ python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feat
 --aggregate --keyword inactive
 </pre>
 
+### Running on private data
 
-
-
+You may change the code on `sc2_evaluation.py` and create customized results, and in the future SC2 may be available on our Lab server.
 
 
 ## 📖 Citation
