@@ -110,7 +110,7 @@ You may change the code on `sc2_evaluation.py` and create customized results, an
 
 ### Issue report
 
-Feel free to open an issue or get in touch with : lin.chen@ed.ac.uk ✉️.
+This project is under development and please feel free to open an issue or get in touch with: lin.chen@ed.ac.uk ✉️.
  
 
 ## 📖 Citation
