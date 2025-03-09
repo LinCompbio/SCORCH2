@@ -17,6 +17,10 @@ SCORCH1 data is from https://github.com/SMVDGroup/SCORCH/
 
 PDBBind data is from https://www.pdbbind-plus.org.cn
 
+## Data prep
+
+SC2 accepts the same data curation setting in SC1, including `.pdbqt` format input for receptor and ligand, SC2 officially takes [ADFRsuite](https://ccsb.scripps.edu/adfr/downloads/) for format conversion.
+
 ## Running
 
 ### Reproduce the result on common benchmarks
