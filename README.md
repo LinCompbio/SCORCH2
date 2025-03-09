@@ -106,6 +106,10 @@ python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feat
 
 You may change the code on `sc2_evaluation.py` and create customized results, and in the future SC2 will be available on the Lab server as a common service.
 
+### Issue report
+
+Feel free to open an issue or get in touch with : lin.chen@ed.ac.uk ✉️.
+ 
 
 ## 📖 Citation
 
