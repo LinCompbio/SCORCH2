@@ -15,6 +15,8 @@ PDBScreen data is derived from [Equiscore](https://github.com/CAODH/EquiScore?ta
 
 SCORCH1 data is from https://github.com/SMVDGroup/SCORCH/
 
+PDBBind data is from https://www.pdbbind-plus.org.cn
+
 
 ## 📖 Citation
 
