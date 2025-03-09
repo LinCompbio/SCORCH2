@@ -52,6 +52,14 @@ python feature_extraction_ligand_entropy.py --des_path /path/to/results --protei
 
 PS: The speed for running will depend on the size of the receptor, crop redundant parts will significantly increase the efficiency.
 
+## Normalization
+
+SC2 combines two XGBoost models with separate normalizer, with the feature generated, you will need to scale them into distinct feature spaces.
+
+
+
+
+
 ## Running
 
 ### Reproduce the result on common benchmarks
@@ -85,6 +93,8 @@ VSDS-VD
 python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/vsds/sc2_ps_flare_vsds --sc2_pb_feature_repo evaluation_feature/vsds/sc2_pb_flare_vsds 
 --aggregate --keyword inactive
 </pre>
+
+
 
 
 
