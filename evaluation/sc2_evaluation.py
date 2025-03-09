@@ -19,7 +19,7 @@ true_decoy_gap = [
 "P34969", "P08908", "P28335", "P30542", "P29274", "P34972", "P21453", "O43614",
 "P28223", "P08253", "P03952", "P14780", "P00742", "P45452", "P27487", "P08246",
 "P07711", "P00734", "P03372", "Q92731", "P51449", "P04150", "Q96RI1", "P31645",
-"P01375", "O15379", "Q9UBN7", "Q07817", "Q07820", "P10415", "O60341"]
+"P01375", "O15379", "Q9UBN7", "Q07817", "Q0782git push origin main0", "P10415", "O60341"]
 
 
 dekois1 = ['ACE', 'ACHE', 'ADRB2', 'CATL', 'DHFR', 'ERBB2', 'HDAC2', 'HIV1PR', 'HSP90', 'JAK3', 'JNK2',
@@ -197,7 +197,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--targets', type=str, nargs='+', required=False, help="List of target names (space-separated).")
     parser.add_argument('--aggregate', type=str, required=False, help="Aggregate results by taking the maximum confidence",default = True)
-    parser.add_argument('keyword', type=str, required=False, help="Keyword to assign labels to the dataset. "
+    parser.add_argument('--keyword', type=str, required=False, help="Keyword to assign labels to the dataset. "
                                                                   "If the dataset use "
                                                                   "active / inactive to differentiate compounds, then it should be 'inactive'. "
                                                                   "If the dataset use "

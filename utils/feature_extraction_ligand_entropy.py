@@ -5,7 +5,6 @@ import random
 from tqdm import tqdm
 import kier
 import ecif_accelerate
-from openbabel import openbabel as ob
 from openbabel import pybel
 from rdkit import Chem, RDLogger
 import json
@@ -14,54 +13,20 @@ import multiprocessing
 from functools import partial
 from binana_accelerate import PDB
 from multiprocessing import Pool, TimeoutError
-from rdkit.Chem import GraphDescriptors
-from rdkit.Chem import rdMolDescriptors
 from tqdm import tqdm
-from rdkit.Chem import AllChem
-from rdkit.Chem.rdFreeSASA import CalcSASA,classifyAtoms
-import functools
 import signal
-import time
 from functools import wraps
-import csv
-from io import StringIO
-from concurrent.futures import ThreadPoolExecutor
 from rdkit.ML.Descriptors import MoleculeDescriptors
 from rdkit.Chem import Descriptors
 import glob
+import argparse
+
 # Mute all RDKit warnings
 RDLogger.logger().setLevel(RDLogger.ERROR)
 
 ob_log_handler = pybel.ob.OBMessageHandler()
 ob_log_handler.SetOutputLevel(0)
 pybel.ob.obErrorLog.StopLogging()
-
-class TimeoutException(Exception):
-    pass
-
-
-def time_limit(seconds):
-    def decorator(func):
-        def handler(signum, frame):
-            raise TimeoutException(f"Function exceeded time limit of {seconds} seconds")
-
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, handler)
-            signal.alarm(seconds)
-
-            try:
-                result = func(*args, **kwargs)
-            except TimeoutException:
-                return pd.DataFrame()  # 超时返回空的 DataFrame
-            finally:
-                signal.alarm(0)
-
-            return result
-
-        return wrapper
-
-    return decorator
 
 
 def calculate_ecifs(ligand_pdbqt_block, receptor_content):
@@ -290,13 +255,12 @@ def run_binana(ligand_pdbqt_block, receptor_content):
 
 
 def prune_df_headers(df):
-    reference_headers = json.load(open(os.path.join('features.json')))
+    reference_headers = json.load(open(os.path.join('SC1_features.json')))
     headers_58 = reference_headers.get('492_models_58')
     return df[headers_58]
 
 
-# @time_limit(30)
-def process_decoy(decoy, ligand_path, pdbid, protein_content, protein_path):
+def process_molecule(decoy, ligand_path, pdbid, protein_content, protein_path):
 
     with open(os.path.join(ligand_path, pdbid, decoy), 'r') as f:
         lig_text = f.read()
@@ -312,7 +276,6 @@ def process_decoy(decoy, ligand_path, pdbid, protein_content, protein_path):
                 continue
             else:
                 pose = '\n'.join(clean_lines)
-                # k,entropy_features = kier_flexibility(pose)
                 k, rdkit_2d_descriptors = kier_flexibility(pose)
                 entropy_df = pd.DataFrame([rdkit_2d_descriptors])
                 binana_features = run_binana(clean_lines, protein_content)
@@ -331,40 +294,25 @@ def process_decoy(decoy, ligand_path, pdbid, protein_content, protein_path):
     return pd.concat(results, ignore_index=True) if results else pd.DataFrame()
 
 
-def process_pdbid(pdbid, protein_base_path, decoys_path, des_path):
-
-    # protein_path = f'{protein_base_path}/{pdbid}_receptor.pdbqt'
+def process_pdbid(pdbid, protein_base_path, molecule_path, des_path):
     protein_path = glob.glob(f'{protein_base_path}/{pdbid}*.pdbqt')
     if not protein_path:
         print(f'Protein file not found for {pdbid}')
         return
-    else:
-        protein_path = protein_path[0]
+    protein_path = protein_path[0]
 
-    rec_or_pro = 'protein'
-
-    # if not os.path.exists(protein_path):
-    #     if os.path.exists(f'{protein_base_path}/{pdbid}_protein.pdbqt'):
-    #         protein_path = f'{protein_base_path}/{pdbid}_protein.pdbqt'
-    #         rec_or_pro = 'protein'
-    #     else:
-    #         print(f'Protein file not found for {pdbid}')
-    #         return
-
-    output_file = os.path.join(des_path, f'{pdbid}_{rec_or_pro}_features.csv')
+    output_file = os.path.join(des_path, f'{pdbid}_features.csv')
     if os.path.exists(output_file):
-        print(f'PBDID {pdbid} Feature File exists')
+        print(f'PDBID {pdbid} Feature File exists')
         return
 
-    pdbid_path = os.path.join(decoys_path, pdbid)
-    if not os.path.exists(pdbid_path):
+    molecule_path = os.path.join(molecule_path, pdbid)
+    if not os.path.exists(molecule_path):
         print(f'Decoys not found for {pdbid}')
         return
-    else:
-        decoys = os.listdir(pdbid_path)
-        # decoys = [decoy for decoy in decoys if 'ligand' in decoy]
-        # selected_decoys = random.sample(decoys, min(len(decoys), 150))
+    decoys = os.listdir(molecule_path)
 
+    # Read protein content and start processing
     try:
         with open(protein_path, 'r') as f:
             protein_content = list(f.readlines())
@@ -373,22 +321,21 @@ def process_pdbid(pdbid, protein_base_path, decoys_path, des_path):
             receptor_object.assign_secondary_structure()
 
         with Pool(processes=os.cpu_count()-1) as pool:
-            process_func = partial(process_decoy, ligand_path=decoys_path, pdbid=pdbid, protein_content=receptor_object, protein_path=protein_path)
+            process_func = partial(process_molecule, ligand_path=molecule_path, pdbid=pdbid, protein_content=receptor_object, protein_path=protein_path)
             futures = [pool.apply_async(process_func, (decoy,)) for decoy in decoys]
 
             results = []
             for future in futures:
                 try:
-                    result = future.get()  # 等待每个子进程的结果，并设置超时
+                    result = future.get()  # Wait for each sub-process result
                     results.append(result)
                 except TimeoutError:
                     print(f"Processing decoy timed out")
-                    break
                 except Exception as e:
                     print(f"Error: {e}")
 
             if results:
-                dask_results = dd.from_pandas(pd.concat(results, ignore_index=True), npartitions=os.cpu_count() - 1)
+                dask_results = dd.from_pandas(pd.concat(results, ignore_index=True), npartitions=8)
                 total = dask_results.compute()
 
                 if not total.empty:
@@ -396,47 +343,31 @@ def process_pdbid(pdbid, protein_base_path, decoys_path, des_path):
                     os.makedirs(output_directory, exist_ok=True)
                     total.to_csv(output_file, index=False)
 
-
-            # if results:
-
-                # # Use StringIO as a buffer
-                # buffer = StringIO()
-                # csv_writer = csv.writer(buffer)
-                #
-                # # Write header
-                # if results[0] is not None:
-                #     csv_writer.writerow(results[0].columns)
-                #
-                # # Write data in chunks
-                # chunk_size = 10000000  # Adjust this value based on your system's memory
-                # for i in range(0, len(results), chunk_size):
-                #     chunk = results[i:i + chunk_size]
-                #     for df in chunk:
-                #         if df is not None:
-                #             csv_writer.writerows(df.values)
-                #
-                # # Write buffer contents to file
-                # output_directory = os.path.join(des_path, task)
-                # os.makedirs(output_directory, exist_ok=True)
-                # with open(output_file, 'w', newline='') as f:
-                #     f.write(buffer.getvalue())
-
     except Exception as E:
         print(f'Error processing {pdbid}: {E}')
 
 
-if __name__ == "__main__":
+def main(args):
+    des_path = args.des_path
+    protein_base_path = args.protein_base_path
+    molecule_path = args.molecule_path
+    pdbids = [i.split("_")[0] for i in os.listdir(protein_base_path)]
 
 
-    des_path = '/home/s2523227/sc2_dapanther/ranking_test/fep_benchmark_feature'
     os.makedirs(des_path, exist_ok=True)
-    # task = 'rmsd_4'
-    protein_base_path = '/home/s2523227/sc2_dapanther/ranking_test/fep_protein_pdbqt'
-    decoys_path = '/home/s2523227/sc2_dapanther/ranking_test/fep_molecule_pdbqt'
-
-    # pdbids = pd.read_csv('/home/s2523227/single_group/pdbid_saved.csv')['pdbid'].tolist()
-    pdbids = [i.split('_')[0] for i in os.listdir(protein_base_path)]
 
     for pdbid in tqdm(pdbids):
-        process_pdbid(pdbid, protein_base_path, decoys_path, des_path)
+        process_pdbid(pdbid, protein_base_path, molecule_path, des_path)
 
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Process PDBID features from decoy protein-ligand pairs")
+    parser.add_argument('--des_path', type=str, required=True, help="Directory to save the results.")
+    parser.add_argument('--protein_base_path', type=str, required=True, help="Directory containing protein pdbqt files.")
+    parser.add_argument('--molecule_path', type=str, required=True, help="Directory containing molecule pdbqt files.")
+
+    args = parser.parse_args()
+    pdbids = args.pdbids.split(',')  # Convert the comma-separated string into a list of pdbids
+
+    main(args)
