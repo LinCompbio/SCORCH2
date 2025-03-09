@@ -47,11 +47,7 @@ PS: Adding charges by Openbabel may cause result deviation.
 
 SC2 feature is majorly combined with three parts, BINANA, ECIF, and Rdkit, to extract features for rescoring, run the script below:
 <pre>
-python ligand_2_pdbqt.py \
-  --input_dir /path/to/input_ligands \
-  --output_dir /path/to/output_pdbqt \
-  --input_format pdb \
-  --n_proc XX
+python feature_extraction_ligand_entropy.py --des_path /path/to/results --protein_base_path /path/to/proteins --molecule_path /path/to/molecules
 </pre>
 
 PS: The speed for running will depend on the size of the receptor, crop redundant parts will significantly increase the efficiency.
