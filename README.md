@@ -21,6 +21,28 @@ PDBBind data is from https://www.pdbbind-plus.org.cn
 
 SC2 accepts the same data curation setting in SC1, including `.pdbqt` format input for receptor and ligand, SC2 officially takes [ADFRsuite](https://ccsb.scripps.edu/adfr/downloads/) for format conversion.
 
+🧬 Ligand Batch Conversion to .pdbqt Format
+<pre>
+python receptor_2_pdbqt.py \
+  --input_dir /path/to/input_ligands \
+  --output_dir /path/to/output_pdbqt \
+  --input_format mol2 \
+  --n_proc XX
+</pre>
+
+🧬 Receptor Batch Conversion to .pdbqt Format
+<pre>
+python ligand_2_pdbqt.py \
+  --input_dir /path/to/input_ligands \
+  --output_dir /path/to/output_pdbqt \
+  --input_format pdb \
+  --n_proc XX
+</pre>
+
+## Feature extraction
+
+
+
 ## Running
 
 ### Reproduce the result on common benchmarks
