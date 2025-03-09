@@ -1,4 +1,4 @@
-  # SCORCH2
+![c](https://github.com/user-attachments/assets/01483c63-0174-4765-b2b6-b5b14b4d9f25)  # SCORCH2
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg) [![XGBoost](https://img.shields.io/badge/XGBoost-enabled-orange)](https://github.com/dmlc/xgboost)
 
@@ -81,14 +81,14 @@ Features from different docking methods are integrated inside and simply change 
 --sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_pb_flare --sc2_ps_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_flare
 </pre>
 
-DUDE 
+#### DUDE 
 <pre>
 python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/dude/sc2_ps_equiscore_dude --sc2_pb_feature_repo evaluation_feature/dude/sc2_pb_equiscore_dude 
 --keyword active
 </pre>
 without --aggregate since only one pose is available
 
-VSDS-VD
+#### VSDS-VD
 <pre>
 python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/vsds/sc2_ps_flare_vsds --sc2_pb_feature_repo evaluation_feature/vsds/sc2_pb_flare_vsds 
 --aggregate --keyword inactive
