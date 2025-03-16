@@ -1,0 +1,33 @@
+name: scorch2
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib-base
+  - seaborn
+  - scikit-learn
+  - tqdm
+  - optuna
+  - dask
+  - xgboost
+  - rdkit
+  - openbabel
+  - sqlalchemy
+  - joblib
+  - pycairo
+  - rlpycairo
+  - fonttools
+  - contourpy
+  - pyparsing
+  - python-dateutil
+  - pytz
+  - packaging
+  - typing-extensions
+  - freetype-py
+  - mamba
+  - reportlab
