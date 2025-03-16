@@ -74,7 +74,7 @@ python train_xgboost.py --train_features <path_to_train_features> \
 
 ### Reproduce the result on common benchmarks
 
-Download the prepared features (DUD-E, DEKOIS, VSDS-VD), and model weight for two XGBoost models from zenodo: XXX. Unzip the files to the root repository. Then run script below:
+Download the prepared features (DUD-E, DEKOIS, VSDS-VD, MERCK FEP benchmark), and model weight for two XGBoost models from zenodo: XXX. Unzip the files to the root repository. Then run script below:
 
 <pre>
 python3 sc2_evaluation.py --sc2_ps path-to-sc2_ps.pkl --sc2_pb path-to-sc2_pb.pkl  --sc2_ps_feature_repo path-to-sc2_ps-feature --sc2_ps_feature_repo path-to-sc2_ps-feature --aggregate --keyword active
@@ -91,17 +91,30 @@ Features from different docking methods are integrated inside and simply change 
 --sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_pb_flare --sc2_ps_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_flare
 </pre>
 
-#### DUDE 
+#### DUD-E 
 <pre>
 python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/dude/sc2_ps_equiscore_dude --sc2_pb_feature_repo evaluation_feature/dude/sc2_pb_equiscore_dude 
 --keyword active
 </pre>
 without --aggregate since only one pose is available
 
-#### VSDS-VD
+#### VSDS-vd
 <pre>
 python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/vsds/sc2_ps_flare_vsds --sc2_pb_feature_repo evaluation_feature/vsds/sc2_pb_flare_vsds 
 --aggregate --keyword inactive
+</pre>
+
+#### MERCK FEP benchmark
+<pre> 
+python sc2_evaluation.py --mode ranking \
+    --sc2_ps /path/to/models/sc2_ps.pkl \
+    --sc2_pb /path/to/models/sc2_pb.pkl \
+    --sc2_ps_feature_repo /path/to/features/sc2_ps_normalized \
+    --sc2_pb_feature_repo /path/to/features/sc2_pb_normalized \
+    --exp_repo /path/to/experimental_data \
+    --gpu \
+    --save_predictions \
+    --output output/ranking_results.csv
 </pre>
 
 ### Running on private data
