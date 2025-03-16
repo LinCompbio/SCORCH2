@@ -74,21 +74,24 @@ python train_xgboost.py --train_features <path_to_train_features> \
 
 ### Reproduce the result on common benchmarks
 
-Download the prepared features (DUD-E, DEKOIS, VSDS-VD, MERCK FEP benchmark), and model weight for two XGBoost models from zenodo: XXX. Unzip the files to the root repository. Then run script below:
+Download the prepared features (DUD-E, DEKOIS, VSDS-VD, MERCK FEP benchmark), and model weight for two XGBoost models from zenodo: XXX. Unzip the files to the root repository. Then run one of the scripts below:
 
+#### DEKOIS 2.0
 <pre>
-python3 sc2_evaluation.py --sc2_ps path-to-sc2_ps.pkl --sc2_pb path-to-sc2_pb.pkl  --sc2_ps_feature_repo path-to-sc2_ps-feature --sc2_ps_feature_repo path-to-sc2_ps-feature --aggregate --keyword active
+python sc2_evaluation.py --mode vs \
+    --sc2_ps /path/to/models/sc2_ps.pkl \
+    --sc2_pb /path/to/models/sc2_pb.pkl \
+    --sc2_ps_feature_repo /path/to/features/sc2_ps \
+    --sc2_pb_feature_repo /path/to/features/sc2_pb \
+    --keyword active \
+    --aggregate \
+    --gpu \
+    --output output/vs_results.csv
 </pre>
 
-For example, to get the result on DEKOIS 2.0 dataset, Glide SP docking poses:
+Features from different docking methods are integrated inside and simply change the child path to get SC2 result on other DEKOIS2 docking poses, for example:
 <pre>
-python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_ps_equiscore_glide --sc2_ps_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_equiscore_glide 
---aggregate --keyword active
-</pre>
-
-Features from different docking methods are integrated inside and simply change the child path like this to get SC2 result on Flare docking poses :
-<pre>
---sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_pb_flare --sc2_ps_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_flare
+--sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_ps_flare --sc2_pb_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_flare
 </pre>
 
 #### DUD-E 
