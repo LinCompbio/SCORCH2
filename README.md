@@ -107,6 +107,7 @@ python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feat
 --aggregate --keyword inactive
 </pre>
 
+
 #### MERCK FEP benchmark
 <pre> 
 python sc2_evaluation.py --mode ranking \
