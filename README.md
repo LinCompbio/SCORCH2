@@ -99,7 +99,7 @@ Features from different docking methods are integrated inside and simply change 
 python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/dude/sc2_ps_equiscore_dude --sc2_pb_feature_repo evaluation_feature/dude/sc2_pb_equiscore_dude 
 --keyword active
 </pre>
-without --aggregate since only one pose is available
+without --aggregate since only one pose for each molecule is available
 
 #### VSDS-vd
 <pre>
