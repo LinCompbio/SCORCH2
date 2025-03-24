@@ -130,14 +130,13 @@ without --aggregate since only one pose for each molecule is available
 
 #### MERCK FEP benchmark
 <pre> 
-python sc2_evaluation.py --mode ranking \
+python sc2_evaluation.py ranking \
     --sc2_ps /path/to/models/sc2_ps.pkl \
     --sc2_pb /path/to/models/sc2_pb.pkl \
     --sc2_ps_feature_repo /path/to/features/sc2_ps_normalized \
     --sc2_pb_feature_repo /path/to/features/sc2_pb_normalized \
     --exp_repo /path/to/experimental_data \
     --gpu \
-    --save_predictions \
     --output output/ranking_results.csv
 </pre>
 
