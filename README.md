@@ -63,7 +63,7 @@ PS: The speed for running will depend on the size of the receptor, crop redundan
 SC2 combines two XGBoost models with separate normalizer, with the feature generated, you will need to scale them into distinct feature spaces.
 
 <pre>
-python process_data.py inference \
+python process_data.py scaling \
     --feature_dir /path/to/features \
     --output_path /path/to/normalized_features \
     --pb_scaler_path /path/to/pb_scaler.pkl \
