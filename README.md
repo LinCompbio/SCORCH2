@@ -7,7 +7,7 @@
 SCORCH2 (SC2) is a machine learning-based consensus rescoring model designed for interaction-based virtual screening. SC2 is a continual work build upon SC1 (https://github.com/SMVDGroup/SCORCH/), where two XGBoost models are curated with distinct data and trained independently to derive local optimal knowledge patterns. Their outputs are then combined in a consensus manner, resulting in improved active compound enrichment.
 
 <div style="text-align: center;">
-  <img src="main.jpg" style="width: 90%;" />
+<img src="main.jpg" style="width: 90%;" />
 </div>
 
 ## Dataset
