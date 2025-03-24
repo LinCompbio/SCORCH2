@@ -56,6 +56,7 @@ PS: The speed for running will depend on the size of the receptor, crop redundan
 
 SC2 combines two XGBoost models with separate normalizer, with the feature generated, you will need to scale them into distinct feature spaces.
 
+<!--
 ## Retrain the model 
 
 Though we recommend taking official weights since SC2 has already been explored for optimal generalizability and top enrichment in current scope, but you could run the code below to retrain the model on your own data.
@@ -68,7 +69,7 @@ python train_xgboost.py --train_features <path_to_train_features> \
                         --output_dir <path_to_output_directory> \
                         [--n_trials <number_of_trials>]
 ```
-
+-->
 
 ## Running
 
