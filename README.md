@@ -66,8 +66,8 @@ SC2 combines two XGBoost models with separate normalizer, with the feature gener
 python process_data.py scaling \
     --feature_dir /path/to/features \
     --output_path /path/to/normalized_features \
-    --pb_scaler_path /path/to/pb_scaler.pkl \
-    --ps_scaler_path /path/to/ps_scaler.pkl
+    --pb_scaler_path /path/to/sc2_pb_scaler \
+    --ps_scaler_path /path/to/sc2_ps_scaler
 </pre>
 
 The code will create two sub-repositories under --output_path, including the feature for SC2-PS and SC2-PB.
