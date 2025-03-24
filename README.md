@@ -10,6 +10,12 @@ SCORCH2 (SC2) is a machine learning-based consensus rescoring model designed for
 <img src="main.jpg" style="width: 90%;" />
 </div>
 
+## Environment setup 
+
+```bash
+conda env create -f environment.yml
+```
+
 ## Dataset
 PDBScreen data is derived from [Equiscore](https://github.com/CAODH/EquiScore?tab=readme-ov-file) and can be accessed from: [Zenodo](https://zenodo.org/records/8049380).
 
