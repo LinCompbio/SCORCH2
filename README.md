@@ -95,7 +95,7 @@ Download the prepared features (DUD-E, DEKOIS, VSDS-VD, MERCK FEP benchmark), an
 
 #### DEKOIS 2.0
 <pre>
-python sc2_evaluation.py --mode vs \
+python sc2_evaluation.py vs \
     --sc2_ps /path/to/models/sc2_ps.pkl \
     --sc2_pb /path/to/models/sc2_pb.pkl \
     --sc2_ps_feature_repo /path/to/features/sc2_ps \
@@ -106,22 +106,25 @@ python sc2_evaluation.py --mode vs \
     --output output/vs_results.csv
 </pre>
 
-Features from different docking methods are integrated inside and simply change the child path to get SC2 result on other DEKOIS2 docking poses, for example:
+Features from different docking methods are integrated inside and simply change the child path to get SC2 result on other DEKOIS2.0 docking poses, for example:
 <pre>
 --sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_ps_flare --sc2_pb_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_flare
 </pre>
 
 #### DUD-E 
 <pre>
-python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/dude/sc2_ps_equiscore_dude --sc2_pb_feature_repo evaluation_feature/dude/sc2_pb_equiscore_dude 
---keyword active
+  --sc2_ps_feature_repo evaluation_feature/dude/sc2_ps_equiscore_dude \
+  --sc2_pb_feature_repo evaluation_feature/dude/sc2_pb_equiscore_dude \
+  --keyword active
 </pre>
 without --aggregate since only one pose for each molecule is available
 
 #### VSDS-vd
 <pre>
-python3 sc2_evaluation.py --sc2_ps sc2_ps.pkl --sc2_pb sc2_pb.pkl  --sc2_ps_feature_repo evaluation_feature/vsds/sc2_ps_flare_vsds --sc2_pb_feature_repo evaluation_feature/vsds/sc2_pb_flare_vsds 
---aggregate --keyword inactive
+  --sc2_ps_feature_repo evaluation_feature/vsds/sc2_ps_flare_vsds \
+  --sc2_pb_feature_repo evaluation_feature/vsds/sc2_pb_flare_vsds \
+  --aggregate \
+  --keyword inactive
 </pre>
 
 
