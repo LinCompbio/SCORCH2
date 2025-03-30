@@ -38,7 +38,7 @@ def create_normalizer(args):
 # Define process_file at the top level so it can be pickled by multiprocessing
 def process_file(file, args, pb_dir, ps_dir, sc2_pb_scaler, sc2_ps_scaler):
     if file.endswith('.csv'):
-        name = file.split('XXX')[0]
+        name = file.split('_protein')[0]
         df = pd.read_csv(os.path.join(args.feature_dir, file))
         df_id = df['Id']
 
@@ -51,7 +51,7 @@ def process_file(file, args, pb_dir, ps_dir, sc2_pb_scaler, sc2_ps_scaler):
         val_pb['Id'] = df_id
 
         val_pb.fillna(0, inplace=True)
-        val_pb.to_csv(f'{pb_dir}/{name}_normalized_pb.csv', index=False)
+        val_pb.to_csv(f'{pb_dir}/{name}_normalized.csv', index=False)
 
         # Process sc2_ps
         df_ps = df.copy()
@@ -62,7 +62,7 @@ def process_file(file, args, pb_dir, ps_dir, sc2_pb_scaler, sc2_ps_scaler):
         val_ps['Id'] = df_id
 
         val_ps.fillna(0, inplace=True)
-        val_ps.to_csv(f'{ps_dir}/{name}_normalized_ps.csv', index=False)
+        val_ps.to_csv(f'{ps_dir}/{name}_normalized.csv', index=False)
 
 
 def scale_sc2(args):

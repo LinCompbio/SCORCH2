@@ -20,7 +20,7 @@ from scipy.spatial.distance import cdist
 from itertools import product
 from rdkit.Chem import AllChem
 from rdkit.ML.Descriptors.MoleculeDescriptors import MolecularDescriptorCalculator
-import openbabel as ob
+from openbabel import openbabel as ob
 import subprocess
 # Possible predefined protein atoms
 ECIF_ProteinAtoms = ['C;4;1;3;0;0', 'C;4;2;1;1;1', 'C;4;2;2;0;0', 'C;4;2;2;0;1',

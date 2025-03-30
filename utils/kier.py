@@ -13,7 +13,7 @@
 
 from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
-import openbabel as ob
+from openbabel import openbabel as ob
 import subprocess
 # from oddt import toolkit,shape
 # from molent.molent import entropy, binary_similarity, atomic_smiles

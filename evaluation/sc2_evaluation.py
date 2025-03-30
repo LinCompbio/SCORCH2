@@ -111,8 +111,11 @@ def run_vs_evaluation(args):
         args: Command line arguments
     """
     # Load trained models
-    sc2_ps = joblib.load(args.sc2_ps)
-    sc2_pb = joblib.load(args.sc2_pb)
+    sc2_ps = xgb.Booster()
+    sc2_ps.load_model(args.sc2_ps)
+    sc2_pb = xgb.Booster()
+    sc2_pb.load_model(args.sc2_pb)
+
     params = {'tree_method': 'hist', 'device': 'cuda' if args.gpu else 'cpu'}
     sc2_ps.set_param(params)
     sc2_pb.set_param(params)
@@ -127,21 +130,21 @@ def run_vs_evaluation(args):
     # Process each target file
     for file in tqdm(files, desc="Processing targets"):
         try:
-            path1 = os.path.join(args.sc2_ps_feature_repo, file)
-            path2 = os.path.join(args.sc2_pb_feature_repo, file)
+            path_ps = os.path.join(args.sc2_ps_feature_repo, file)
+            path_pb = os.path.join(args.sc2_pb_feature_repo, file)
             
-            group = file.split('_')[0].upper()
+            group = path_ps.split('/')[-1].split('_normalized')[0]
             groups.append(group)
-            
+
             # Load data
-            X1, y1, id1 = vs_load_and_prepare_data(path1, args, drop_columns=['Id', 'label'])
+            X1, y1, id1 = vs_load_and_prepare_data(path_ps, args, drop_columns=['Id', 'label'])
             # Identical y,id
-            X2, _, _ = vs_load_and_prepare_data(path2, args, drop_columns=['Id', 'label'])
-            
+            X2, _, _ = vs_load_and_prepare_data(path_pb, args, drop_columns=['Id', 'label'])
+
             # Convert to XGBoost DMatrix
             X1 = xgb.DMatrix(X1, feature_names=X1.columns.tolist())
             X2 = xgb.DMatrix(X2, feature_names=X2.columns.tolist())
-            
+
             # Predict
             preds1 = sc2_ps.predict(X1)
             preds2 = sc2_pb.predict(X2)
@@ -217,13 +220,15 @@ def run_ranking_evaluation(args):
         args: Command line arguments
     """
     # Load trained models
-    model_ps = joblib.load(args.sc2_ps)
-    model_pb = joblib.load(args.sc2_pb)
+    sc2_ps = xgb.Booster()
+    sc2_ps.load_model(args.sc2_ps)
+    sc2_pb = xgb.Booster()
+    sc2_pb.load_model(args.sc2_pb)
     
     # Set model parameters
-    params = {'tree_method': 'gpu_hist'} if args.gpu else {'tree_method': 'hist'}
-    model_ps.set_param(params)
-    model_pb.set_param(params)
+    params = {'tree_method': 'hist', 'device':'cuda'} if args.gpu else {'tree_method': 'hist'}
+    sc2_ps.set_param(params)
+    sc2_pb.set_param(params)
     
     # Get files from feature repository
     feature_repo_ps = args.sc2_ps_feature_repo
@@ -255,8 +260,8 @@ def run_ranking_evaluation(args):
             features_pb, id_pb = ranking_load_and_prepare_data(path_pb, drop_columns=['Id'])
             
             # Make predictions
-            preds_ps = model_ps.predict(features_ps)
-            preds_pb = model_pb.predict(features_pb)
+            preds_ps = sc2_ps.predict(features_ps)
+            preds_pb = sc2_pb.predict(features_pb)
             
             # Apply weights
             preds_ps = preds_ps * args.ps_consensus_weight
@@ -356,45 +361,68 @@ def main(args):
 
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(description="SCORCH2 Virtual Screening and Ranking Evaluation")
-    
-    # Mode selection
-    parser.add_argument('--mode', type=str, required=True, choices=['vs', 'ranking'],
-                        help="Evaluation mode: 'vs' for virtual screening or 'ranking' for affinity ranking")
-    
+
+    # Create subparsers
+    subparsers = parser.add_subparsers(dest='mode', required=True, help="Mode of operation")
+
+    # ========================
+    # Virtual Screening Parser
+    # ========================
+    vs_parser = subparsers.add_parser('vs', help='Run virtual screening mode')
+
     # Model paths
-    parser.add_argument('--sc2_ps', type=str, required=True,
-                        help="Path to the SC2-PS model file")
-    parser.add_argument('--sc2_pb', type=str, required=True,
-                        help="Path to the SC2-PB model file")
-    
+    vs_parser.add_argument('--sc2_ps', type=str, required=True, help="Path to the SC2-PS model file")
+    vs_parser.add_argument('--sc2_pb', type=str, required=True, help="Path to the SC2-PB model file")
+
     # Feature repositories
-    parser.add_argument('--sc2_ps_feature_repo', type=str, required=True,
-                        help="Path to the SC2-PS feature directory")
-    parser.add_argument('--sc2_pb_feature_repo', type=str, required=True,
-                        help="Path to the SC2-PB feature directory")
+    vs_parser.add_argument('--sc2_ps_feature_repo', type=str, required=True,
+                           help="Path to the SC2-PS feature directory")
+    vs_parser.add_argument('--sc2_pb_feature_repo', type=str, required=True,
+                           help="Path to the SC2-PB feature directory")
 
-    # Experimental data repository (for ranking mode)
-    parser.add_argument('--exp_repo', type=str, required=True,
-                        help="Path to the experimental data directory (for ranking mode)")
-
-    # VS mode specific options
-    parser.add_argument('--aggregate', action='store_true',
-                        help='Aggregate results by taking the maximum confidence')
-    parser.add_argument('--keyword', type=str, required=True,
-                        help="Keyword to assign labels: 'active' if dataset uses active/decoy, 'inactive' if it uses active/inactive")
+    # VS-specific options
+    vs_parser.add_argument('--aggregate', action='store_true',
+                           help="Aggregate results by taking the maximum confidence")
+    vs_parser.add_argument('--keyword', type=str, required=True,
+                           help="Keyword to assign labels: 'active' if dataset uses active/decoy, 'inactive' if it uses active/inactive")
 
     # Common options
-    parser.add_argument('--ps_consensus_weight', type=float, default=0.7,
-                        help="Weight for SC2-PS predictions (default: 0.7)")
-    parser.add_argument('--pb_consensus_weight', type=float, default=0.3,
-                        help="Weight for SC2-PB predictions (default: 0.3)")
-    parser.add_argument('--gpu', action='store_true',
-                        help='Use GPU for prediction if available')
-    parser.add_argument('--output', type=str,
-                        help="Output CSV file name to save results and predictions. "
-                             "If provided, results and predictions will be saved to the specified path.")
-    
+    vs_parser.add_argument('--ps_consensus_weight', type=float, default=0.7,
+                           help="Weight for SC2-PS predictions (default: 0.7)")
+    vs_parser.add_argument('--pb_consensus_weight', type=float, default=0.3,
+                           help="Weight for SC2-PB predictions (default: 0.3)")
+    vs_parser.add_argument('--gpu', action='store_true', help="Use GPU for prediction if available")
+    vs_parser.add_argument('--output', type=str, help="Output CSV file path to save predictions")
+
+    # =====================
+    # Ranking Mode Parser
+    # =====================
+    ranking_parser = subparsers.add_parser('ranking', help='Run binding affinity ranking mode')
+
+    # Model paths
+    ranking_parser.add_argument('--sc2_ps', type=str, required=True, help="Path to the SC2-PS model file")
+    ranking_parser.add_argument('--sc2_pb', type=str, required=True, help="Path to the SC2-PB model file")
+
+    # Feature repositories
+    ranking_parser.add_argument('--sc2_ps_feature_repo', type=str, required=True,
+                                help="Path to the SC2-PS feature directory")
+    ranking_parser.add_argument('--sc2_pb_feature_repo', type=str, required=True,
+                                help="Path to the SC2-PB feature directory")
+
+    # Ranking-specific: Experimental data
+    ranking_parser.add_argument('--exp_repo', type=str, required=True, help="Path to the experimental data directory")
+
+    # Common options
+    ranking_parser.add_argument('--ps_consensus_weight', type=float, default=0.7,
+                                help="Weight for SC2-PS predictions (default: 0.7)")
+    ranking_parser.add_argument('--pb_consensus_weight', type=float, default=0.3,
+                                help="Weight for SC2-PB predictions (default: 0.3)")
+    ranking_parser.add_argument('--gpu', action='store_true', help="Use GPU for prediction if available")
+    ranking_parser.add_argument('--output', type=str, help="Output CSV file path to save predictions")
+
+
     args = parser.parse_args()
     main(args)
 
