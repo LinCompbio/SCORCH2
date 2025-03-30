@@ -1,0 +1,55 @@
+MODEL 18
+REMARK VINA RESULT:    -8.071      1.460      1.905
+REMARK INTER + INTRA:         -10.352
+REMARK INTER:                  -9.791
+REMARK INTRA:                  -0.561
+REMARK UNBOUND:                -0.394
+REMARK  4 active torsions:
+REMARK  status: ('A' for Active; 'I' for Inactive)
+REMARK       I    between atoms: C1_1  and  N1_2 
+REMARK    1  A    between atoms: C2_4  and  C1_1 
+REMARK    2  A    between atoms: O1_3  and  C12_18 
+REMARK    3  A    between atoms: C15_21  and  O1_3 
+REMARK    4  A    between atoms: C9_14  and  C5_10 
+ROOT
+ATOM      1  C2  RU5 d   1     -11.203  47.669   5.506  0.00  0.00     0.034 A 
+ATOM      2  C3  RU5 d   1     -10.055  47.791   6.131  0.00  0.00     0.049 A 
+ATOM      3  N3  RU5 d   1      -8.905  48.897   8.275  0.00  0.00    -0.340 N 
+ATOM      4  H3  RU5 d   1      -7.942  48.583   8.155  1.00  0.00     0.167 HD
+ATOM      5  C4  RU5 d   1      -9.970  48.604   7.420  0.00  0.00     0.061 A 
+ATOM      6  N4  RU5 d   1     -10.645  49.898   9.157  0.00  0.00    -0.340 N 
+ATOM      7  C5  RU5 d   1      -9.388  49.708   9.343  0.00  0.00     0.116 A 
+ATOM      8  C6  RU5 d   1     -11.038  49.182   7.903  0.00  0.00     0.060 A 
+ATOM      9  C7  RU5 d   1     -12.374  49.042   7.178  0.00  0.00     0.033 A 
+ATOM     10  C8  RU5 d   1     -12.449  48.340   6.068  0.00  0.00     0.019 A 
+ATOM     11  H   RU5 d   1     -11.266  50.441   9.757  0.00  0.00     0.167 HD
+ENDROOT
+BRANCH   7  12
+ATOM     12  C9  RU5 d   1      -8.546  50.249  10.493  0.00  0.00     0.008 A 
+ATOM     13  C10 RU5 d   1      -9.194  50.653  11.814  0.00  0.00     0.018 A 
+ATOM     14  C11 RU5 d   1      -8.451  51.126  12.792  0.00  0.00     0.038 A 
+ATOM     15  C12 RU5 d   1      -6.946  51.283  12.597  0.00  0.00     0.076 A 
+ATOM     16  C13 RU5 d   1      -6.389  50.940  11.458  0.00  0.00     0.038 A 
+ATOM     17  C14 RU5 d   1      -7.250  50.390  10.327  0.00  0.00     0.018 A 
+BRANCH  15  18
+ATOM     18  O1  RU5 d   1      -6.143  51.771  13.631  0.00  0.00    -0.311 OA
+BRANCH  18  19
+ATOM     19  C15 RU5 d   1      -6.733  52.892  14.219  0.00  0.00     0.076 A 
+ATOM     20  C16 RU5 d   1      -7.340  52.792  15.615  0.00  0.00     0.039 A 
+ATOM     21  C17 RU5 d   1      -7.891  53.849  16.170  0.00  0.00     0.026 A 
+ATOM     22  C18 RU5 d   1      -7.918  55.176  15.418  0.00  0.00     0.034 A 
+ATOM     23 CLA  RU5 d   1      -8.662  56.612  16.167  0.00  0.00    -0.084 Cl
+ATOM     24  C19 RU5 d   1      -7.393  55.264  14.215  0.00  0.00     0.026 A 
+ATOM     25  C20 RU5 d   1      -6.755  54.036  13.572  0.00  0.00     0.039 A 
+ENDBRANCH  18  19
+ENDBRANCH  15  18
+ENDBRANCH   7  12
+BRANCH   1  26
+ATOM     26  C1  RU5 d   1     -11.278  46.856   4.220  0.00  0.00     0.249 C 
+ATOM     27  N1  RU5 d   1     -12.534  46.759   3.503  0.00  0.00    -0.366 N 
+ATOM     28  H   RU5 d   1     -12.591  46.213   2.644  0.00  0.00     0.159 HD
+ATOM     29  H   RU5 d   1     -13.362  47.238   3.859  0.00  0.00     0.159 HD
+ATOM     30  OAB RU5 d   1     -10.319  46.300   3.806  0.00  0.00    -0.268 OA
+ENDBRANCH   1  26
+TORSDOF 4
+ENDMDL
