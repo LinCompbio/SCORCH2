@@ -91,7 +91,7 @@ python train_xgboost.py --train_features <path_to_train_features> \
 
 ### Reproduce the result on common benchmarks
 
-Download the prepared features (DUD-E, DEKOIS, VSDS-VD, MERCK FEP benchmark), and model weight for two XGBoost models from zenodo: XXX. Unzip the files to the root repository. Then run one of the scripts below:
+Download the prepared features (DUD-E, DEKOIS, VSDS-VD, MERCK FEP benchmark), and model weight for two XGBoost models from [Zenodo](10.5281/zenodo.14994007). Unzip the files to the root repository. Then run one of the scripts below:
 
 #### DEKOIS 2.0
 <pre>
