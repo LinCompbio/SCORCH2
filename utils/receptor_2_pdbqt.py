@@ -93,7 +93,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Batch convert .pdb to .pdbqt using prepare_receptor (AutoDockTools)")
     parser.add_argument('--source_dir', type=str, required=True, help='Path to directory with .pdb files')
     parser.add_argument('--output_dir', type=str, required=True, help='Path to directory for .pdbqt files')
-    parser.add_argument('--n_proc', type=int, default=os.cpu_count()-1, help='Number of parallel processes (default: 23)')
+    parser.add_argument('--n_proc', type=int, default=os.cpu_count()-1, help='Number of parallel processes')
 
     args = parser.parse_args()
     main(args.source_dir, args.output_dir, args.n_proc)
