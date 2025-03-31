@@ -51,7 +51,7 @@ PS: Adding charges by Openbabel may cause result deviation.
 
 ## Feature extraction
 
-SC2 feature is majorly combined with three parts, BINANA, ECIF, and Rdkit, to extract features for rescoring, run the script below:
+SC2 feature is majorly combined with three parts, BINANA, ECIF, and Rdkit descriptors, to extract features for rescoring. Run the script below:
 <pre>
 python feature_extraction_ligand_entropy.py --des_path /path/to/results --protein_base_path /path/to/proteins --molecule_path /path/to/molecules
 </pre>
