@@ -89,7 +89,7 @@ if __name__ == "__main__":
     parser.add_argument('--input_dir', type=str, required=True, help='Directory containing ligand files')
     parser.add_argument('--output_dir', type=str, required=True, help='Directory to save .pdbqt files')
     parser.add_argument('--input_format', type=str, required=True, help='Ligand input file format (e.g., pdb, mol2)')
-    parser.add_argument('--n_proc', type=int, default=os.cpu_count()-1, help='Number of parallel processes (default: 23)')
+    parser.add_argument('--n_proc', type=int, default=os.cpu_count()-1, help='Number of parallel processes')
 
     args = parser.parse_args()
     main(args.input_dir, args.output_dir, args.input_format, args.n_proc)
