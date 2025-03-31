@@ -35,16 +35,15 @@ python receptor_2_pdbqt.py \
   --input_dir /path/to/input_ligands \
   --output_dir /path/to/output_pdbqt \
   --input_format mol2 \
-  --n_proc XX
+  --n_proc Number of parallel processes
 </pre>
 
 🧬 Receptor Batch Conversion to .pdbqt Format
 <pre>
 python ligand_2_pdbqt.py \
-  --input_dir /path/to/input_ligands \
+  --source_dir /path/to/input_proteins \
   --output_dir /path/to/output_pdbqt \
-  --input_format pdb \
-  --n_proc XX
+  --n_proc Number of parallel processes
 </pre>
 
 PS: Adding charges by Openbabel may cause result deviation.
