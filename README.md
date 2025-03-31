@@ -111,7 +111,7 @@ Features from different docking methods are integrated inside and simply change 
 --sc2_ps_feature_repo evaluation_feature/dekois/sc2_ps/sc2_ps_flare --sc2_pb_feature_repo evaluation_feature/dekois/sc2_pb/sc2_pb_flare
 </pre>
 
-PS: DUD-E, DEKOIS 2.0 (vina,ledock,surflex,gold) will not support result aggregation since only one pose for each compound is available
+PS: DUD-E, DEKOIS 2.0 (vina,ledock,surflex,gold) will not support result aggregation (a.k.a multipose consideration) since only one pose for each compound is available
 
 #### DUD-E 
 <pre>
