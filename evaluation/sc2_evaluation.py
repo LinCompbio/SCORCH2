@@ -122,23 +122,22 @@ def run_vs_evaluation(args):
 
     # Get list of files for selected targets
     if args.targets:
+        valid_targets = ['dekois1', 'dekois2_unseen', 'dude_unseen', 'true_decoy_gap']
+        assert args.targets in valid_targets, f"Choose the targets from {valid_targets}"
 
-        assert args.targets in ['dekois1', 'dekois2_unseen', 'dude_unseen', 'true_decoy_gap'],('choose the targets from ' 
-        'dekois1', 'dekois2_unseen', 'dude_unseen', 'true_decoy_gap')
+        target_dict = {
+            'dekois1': [i.lower() for i in dekois1],
+            'dekois2_unseen': [i.lower() for i in dekois2_unseen],
+            'dude_unseen': [i.lower() for i in dude_unseen],
+            'true_decoy_gap': [i for i in true_decoy_gap]
+        }
+        targets = target_dict[args.targets]
 
-        if args.targets == 'dekois1':
-            targets = [i.lower() for i in dekois1]
-        elif args.targets == 'dekois2_unseen':
-            targets = [i.lower() for i in dekois2_unseen]
-        elif args.targets == 'dude_unseen':
-            targets = [i.lower() for i in dude_unseen]
-        elif args.targets == 'true_decoy_gap':
-            targets = [i for i in true_decoy_gap]
-
-        files = [f for f in os.listdir(args.sc2_ps_feature_repo) if f.split('_normalized')[0] in targets]
+        files = [f for f in os.listdir(args.sc2_ps_feature_repo) if
+                 '_normalized' in f and f.split('_normalized')[0] in targets]
 
     else:
-        files = [f for f in os.listdir(args.sc2_ps_feature_repo)]
+        files = os.listdir(args.sc2_ps_feature_repo)
 
     # Initialize metric storage
     total_metrics = defaultdict(list)
