@@ -14,6 +14,7 @@ python process_data.py create_normalizer \
     --save_path /path/to/save/scaler \
     --scaler_type maxabs \
     --drop_columns XXX
+```
 
 ### Applying Normalizers
 
@@ -45,7 +46,8 @@ python sc2_evaluation.py vs \
     --sc2_pb_feature_repo /path/to/normalized_features/sc2_pb \
     --keyword active \
     --aggregate \
-    --output results/vs_results.csv
+    --targets XXX \ 
+    --output /path/to/result
 ```
 
 Key metrics reported:
@@ -105,6 +107,7 @@ Key metrics reported:
 - `--aggregate`: Aggregate results by taking the maximum confidence (DUD-E,DEKOIS 2.0 (vina,ledock,surflex,gold) do not support result aggregation
 - since only one pose for each compound is available)
 - `--keyword`: Keyword to assign labels (`active` if dataset uses active/decoy, `inactive` if it uses active/inactive)
+- `--targets`:  Only show the result from selected targets, choose from ['dekois1', 'dekois2_unseen', 'dude_unseen', 'true_decoy_gap'].
 
 #### Ranking Mode Arguments:
 - `--exp_repo`: Path to the experimental data directory
