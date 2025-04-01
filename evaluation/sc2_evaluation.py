@@ -52,7 +52,7 @@ def vs_load_and_prepare_data(path, args, drop_columns=None):
     """
     df = pd.read_csv(path)
     df.fillna(0, inplace=True)
-    
+
     if args.keyword == 'active':
         # Assign labels based on 'Id' containing 'active'
         df['label'] = df['Id'].apply(lambda x: 1 if 'active' in x else 0)
@@ -61,17 +61,17 @@ def vs_load_and_prepare_data(path, args, drop_columns=None):
         df['label'] = df['Id'].apply(lambda x: 0 if 'inactive' in x else 1)
     else:
         raise ValueError("Invalid keyword. Please choose 'active' or 'inactive'.")
-    
+
     y_val = df['label']
     X_val = df.drop(drop_columns, axis=1)
-    
+
     return X_val, y_val, df['Id']
 
 
 def ranking_load_and_prepare_data(path, drop_columns=None):
     """
     Loads dataset and prepares features for ranking evaluation.
-    
+
     Args:
         path: Path to the CSV file
         drop_columns: Columns to drop from features
@@ -121,7 +121,24 @@ def run_vs_evaluation(args):
     sc2_pb.set_param(params)
 
     # Get list of files for selected targets
-    files = [f for f in os.listdir(args.sc2_ps_feature_repo)]
+    if args.targets:
+
+        assert args.targets in ['dekois1', 'dekois2_unseen', 'dude_unseen', 'true_decoy_gap'],('choose the targets from ' 
+        'dekois1', 'dekois2_unseen', 'dude_unseen', 'true_decoy_gap')
+
+        if args.targets == 'dekois1':
+            targets = [i.lower() for i in dekois1]
+        elif args.targets == 'dekois2_unseen':
+            targets = [i.lower() for i in dekois2_unseen]
+        elif args.targets == 'dude_unseen':
+            targets = [i.lower() for i in dude_unseen]
+        elif args.targets == 'true_decoy_gap':
+            targets = [i for i in true_decoy_gap]
+
+        files = [f for f in os.listdir(args.sc2_ps_feature_repo) if f.split('_normalized')[0] in targets]
+
+    else:
+        files = [f for f in os.listdir(args.sc2_ps_feature_repo)]
 
     # Initialize metric storage
     total_metrics = defaultdict(list)
@@ -215,7 +232,6 @@ def run_vs_evaluation(args):
 def run_ranking_evaluation(args):
     """
     Run ranking evaluation.
-    
     Args:
         args: Command line arguments
     """
@@ -248,6 +264,7 @@ def run_ranking_evaluation(args):
     for i in tqdm(range(len(files)), desc="Processing ranking files"):
         try:
             # Load feature files
+
             path_ps = os.path.join(feature_repo_ps, files[i])
             path_pb = os.path.join(feature_repo_pb, files[i])
             
@@ -387,6 +404,9 @@ if __name__ == '__main__':
                            help="Aggregate results by taking the maximum confidence")
     vs_parser.add_argument('--keyword', type=str, required=True,
                            help="Keyword to assign labels: 'active' if dataset uses active/decoy, 'inactive' if it uses active/inactive")
+    vs_parser.add_argument('--targets',type=str,
+                           help="Only get the result from preferred targets")
+
 
     # Common options
     vs_parser.add_argument('--ps_consensus_weight', type=float, default=0.7,
