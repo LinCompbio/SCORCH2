@@ -164,6 +164,17 @@ If you think our work helps, please consider citing the following papers 👇 :
   publisher={Elsevier}
 }
 
+@article {Chen2025.03.31.646332,
+  author = {Chen, Lin and Blay, Vincent and Ballester, Pedro J. and Houston, Douglas R.},
+  title = {SCORCH2: a generalised heterogeneous consensus model for high-enrichment interaction-based virtual screening},
+  elocation-id = {2025.03.31.646332},
+  year = {2025},
+  doi = {10.1101/2025.03.31.646332},
+  publisher = {Cold Spring Harbor Laboratory}
+}
+```
+
+
 
 
 
