@@ -164,16 +164,6 @@ If you think our work helps, please consider citing the following papers 👇 :
   publisher={Elsevier}
 }
 
-@article{lin2025scorch2,
-  title={SCORCH2: advancing generalized interaction-based virtual screening from model consensus with different knowledge pattern},
-  author={McGibbon, Miles and Money-Kyrle, Sam and Blay, Vincent and Houston, Douglas R},
-  journal={Journal of Advanced Research},
-  volume={46},
-  pages={135--147},
-  year={2023},
-  publisher={Elsevier}
-}
-
 
 
 
