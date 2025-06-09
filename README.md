@@ -433,7 +433,3 @@ If SCORCH2 contributes to your research, please cite:
     publisher={Elsevier}
 }
 ```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
