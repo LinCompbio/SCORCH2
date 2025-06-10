@@ -12,7 +12,7 @@ This script extracts features from protein-ligand complexes for use in SCORCH2. 
 Usage:
     python scorch2_feature_extraction.py --protein-dir /path/to/proteins --ligand-dir /path/to/ligands --output-dir /path/to/output
 
-Authors: Your Name
+Authors: Lin Chen
 License: MIT
 """
 
