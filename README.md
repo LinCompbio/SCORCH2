@@ -325,7 +325,7 @@ python evaluation/sc2_evaluation.py vs \
     --output results/dude_results.csv
 ```
 
-**Note**: DUD-E and DEKOIS 2.0 evaluations do not support result aggregation (multi-pose consideration) since only one pose per compound is available.
+**Note**: DUD-E and part of DEKOIS 2.0 (Vina,Gold,Surflex and Ledock poses) evaluations do not support result aggregation (multi-pose consideration) since only one pose per compound is available.
 
 #### Compound Ranking
 ```bash
