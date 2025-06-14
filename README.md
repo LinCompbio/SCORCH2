@@ -306,12 +306,25 @@ Download pre-computed features and models from [Zenodo](https://zenodo.org/recor
 python evaluation/sc2_evaluation.py vs \
     --sc2_ps models/sc2_ps.xgb \
     --sc2_pb models/sc2_pb.xgb \
-    --sc2_ps_feature_repo evaluation_features/dekois/sc2_ps \
-    --sc2_pb_feature_repo evaluation_features/dekois/sc2_pb \
+    --sc2_ps_feature_repo evaluation_features/dekois/sc2_ps/XXX \
+    --sc2_pb_feature_repo evaluation_features/dekois/sc2_pb/XXX \
     --keyword active \
     --aggregate \
     --gpu \
     --output results/dekois_results.csv
+```
+
+#### VSDS-vd Evaluation
+```bash
+python evaluation/sc2_evaluation.py vs \
+    --sc2_ps models/sc2_ps.xgb \
+    --sc2_pb models/sc2_pb.xgb \
+    --sc2_ps_feature_repo evaluation_features/vsds/sc2_ps_flare_vsds \
+    --sc2_pb_feature_repo evaluation_features/vsds/sc2_pb_flare_vsds \
+     --keyword inactive \
+    --aggregate \
+    --gpu \
+    --output results/vsds_results.csv
 ```
 
 #### DUD-E Evaluation
