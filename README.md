@@ -359,42 +359,6 @@ SCORCH2 is evaluated using standard metrics:
 - **Virtual Screening**: Enrichment Factors (EF 0.5%, 1%, 2%, 5%), BEDROC, AUC-ROC, AUC-PR
 - **Binding Affinity Ranking**: Pearson, Spearman, and Kendall correlation coefficients
 
-## Performance Optimization
-
-### Feature Extraction Pipeline
-
-The computational work is handled by `utils/scorch2_feature_extraction.py`:
-
-1. **Parallel Processing**: Multiple protein-ligand pairs processed simultaneously
-2. **Vectorized Calculations**: Efficient molecular descriptor computation
-3. **Memory Management**: Streaming processing to handle large datasets
-4. **I/O Optimization**: Batch file operations
-
-### Best Practices
-
-1. **Use GPU acceleration** (`--gpu` flag) for model inference
-2. **Leverage all CPU cores** (automatic with `--num-cores` unspecified)
-3. **Batch processing** for multiple datasets
-4. **SSD storage** for faster I/O operations
-
-## Output Format
-
-Rescoring results are saved as CSV files with comprehensive metadata:
-
-```csv
-# SCORCH2 Rescoring Results
-# Generated: 2024-01-15 14:30:22
-# SC2-PS Model: sc2_ps.xgb
-# SC2-PB Model: sc2_pb.xgb
-# Consensus Weights: PS=0.70, PB=0.30
-# Poses Aggregated: Yes
-# Total Compounds: 1000
-
-compound_id,sc2_ps_score,sc2_pb_score,sc2_score,rank,selected_pose,total_poses
-compound_1,0.85,0.78,0.825,1,pose3,5
-compound_2,0.72,0.69,0.715,2,pose1,3
-...
-```
 
 ## Data Sources and Benchmarks
 
