@@ -104,6 +104,7 @@ def normalize_features(feature_file: str, ps_scaler_path: str, pb_scaler_path: s
     
     # Load raw features
     df = pd.read_csv(feature_file)
+    df.fillna(0, inplace=True,axis=1)
     print(f"✓ Loaded features: {df.shape[0]} compounds, {df.shape[1]} features")
     
     # Check if Id column exists, if not, it's likely the last column
