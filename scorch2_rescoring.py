@@ -31,6 +31,8 @@ from typing import Dict, List, Tuple, Optional
 import time
 import select
 import json
+import threading
+import queue
 
 
 def run_feature_extraction(protein_dir: str, ligand_dir: str, output_dir: str, num_cores: int = None) -> bool:
@@ -83,120 +85,136 @@ def run_feature_extraction(protein_dir: str, ligand_dir: str, output_dir: str, n
         
         print("Starting feature extraction subprocess...")
         
-        # Initialize buffers and sets
+        # Initialize sets
         processed_targets = set()
-        output_buffer = ""
-        stderr_buffer = ""
 
-        # Start the subprocess
+        # Start the subprocess with unbuffered output
+        env = {**os.environ, "PYTHONUNBUFFERED": "1"}
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
-                                  text=True, universal_newlines=True)
+                                  text=True, universal_newlines=True, env=env)
 
-        # Monitor both stdout and stderr
+        # Define line processing function
+        def process_line(line: str, pbar, processed_targets, is_stderr: bool = False):
+            prefix = "⚠️ Subprocess: " if is_stderr else ""
+            line = line.strip()
+            if not line:
+                return
+
+            # Saved features
+            match = re.search(r"Saved features for (\w+)", line)
+            if match:
+                target = match.group(1)
+                if target not in processed_targets:
+                    processed_targets.add(target)
+                    pbar.set_description(f"Completed: {target}")
+                    pbar.update(1)
+                return
+
+            # Skipped features
+            match = re.search(r"PDBID (\w+) Feature File exists", line)
+            if match:
+                target = match.group(1)
+                if target not in processed_targets:
+                    processed_targets.add(target)
+                    pbar.set_description(f"Skipped: {target}")
+                    pbar.update(1)
+                return
+
+            # Error messages (ignoring specific molecule errors)
+            if any(kw in line.lower() for kw in ["error", "failed", "not found"]):
+                if not (line.startswith("Error processing") and "molecule" in line.lower()):
+                    pbar.write(f"{prefix}⚠️  {line}")
+                return
+
+            # General progress info
+            if "processing" in line.lower() and "pdb ids" in line.lower():
+                pbar.write(f"{prefix}📊 {line}")
+                return
+
+            # Optionally handle other lines if needed
+            # pbar.write(f"{prefix}{line}")
+
+        # Define reader functions
+        def read_stdout(queue, pipe):
+            for line in iter(pipe.readline, ''):
+                queue.put(line)
+            queue.put(None)
+
+        def read_stderr(queue, pipe):
+            for line in iter(pipe.readline, ''):
+                queue.put(line)
+            queue.put(None)
+
+        # Start reader threads
+        stdout_queue = queue.Queue()
+        stderr_queue = queue.Queue()
+        stdout_thread = threading.Thread(target=read_stdout, args=(stdout_queue, process.stdout), daemon=True)
+        stderr_thread = threading.Thread(target=read_stderr, args=(stderr_queue, process.stderr), daemon=True)
+        stdout_thread.start()
+        stderr_thread.start()
+
+        # Process output in real-time
+        # Monitor until process completes
         while process.poll() is None:
-            ready, _, _ = select.select([process.stdout, process.stderr], [], [], 1.0)
-            
-            if process.stdout in ready:
-                data = process.stdout.read(4096)
-                if data:
-                    output_buffer += data
-                    while '\n' in output_buffer:
-                        line, output_buffer = output_buffer.split('\n', 1)
-                        line = line.strip()
-                        if line:
-                            # Look for target processing completion messages
-                            if "Saved features for" in line:
-                                # Extract target name from "Saved features for {target} ({n} poses)"
-                                match = re.search(r"Saved features for (\w+)", line)
-                                if match:
-                                    target = match.group(1)
-                                    if target not in processed_targets:
-                                        processed_targets.add(target)
-                                        if total_targets:
-                                            pbar.set_description(f"Completed: {target}")
-                                            pbar.update(1)
-                                        else:
-                                            pbar.update(1)
-                            
-                            # Look for skipped targets
-                            elif "Feature File exists - skipping" in line:
-                                match = re.search(r"PDBID (\w+) Feature File exists", line)
-                                if match:
-                                    target = match.group(1)
-                                    if target not in processed_targets:
-                                        processed_targets.add(target)
-                                        if total_targets:
-                                            pbar.set_description(f"Skipped: {target}")
-                                            pbar.update(1)
-                                        else:
-                                            pbar.update(1)
-                            
-                            # Look for error messages (but not individual molecule errors)
-                            elif any(keyword in line.lower() for keyword in ["error", "failed", "not found"]):
-                                if not line.startswith("Error processing") or "molecule" not in line:
-                                    pbar.write(f"⚠️  {line}")
-                            
-                            # Look for general progress info
-                            elif "Processing" in line and "PDB IDs" in line:
-                                pbar.write(f"📊 {line}")
-            
-            if process.stderr in ready:
-                data = process.stderr.read(4096)
-                if data:
-                    stderr_buffer += data
-                    while '\n' in stderr_buffer:
-                        line, stderr_buffer = stderr_buffer.split('\n', 1)
-                        line = line.strip()
-                        if line:
-                            pbar.write(f"⚠️ Subprocess: {line}")
-        
-        # Process remaining output after process ends
-        remaining_output = process.stdout.read()
-        if remaining_output:
-            output_buffer += remaining_output
-            while '\n' in output_buffer:
-                line, output_buffer = output_buffer.split('\n', 1)
-                line = line.strip()
-                if line:
-                    # Look for target processing completion messages
-                    if "Saved features for" in line:
-                        match = re.search(r"Saved features for (\w+)", line)
-                        if match:
-                            target = match.group(1)
-                            if target not in processed_targets:
-                                processed_targets.add(target)
-                                if total_targets:
-                                    pbar.set_description(f"Completed: {target}")
-                                    pbar.update(1)
-                    # Look for skipped targets
-                    elif "Feature File exists - skipping" in line:
-                        match = re.search(r"PDBID (\w+) Feature File exists", line)
-                        if match:
-                            target = match.group(1)
-                            if target not in processed_targets:
-                                processed_targets.add(target)
-                                if total_targets:
-                                    pbar.set_description(f"Skipped: {target}")
-                                    pbar.update(1)
-                    # Look for error messages (but not individual molecule errors)
-                    elif any(keyword in line.lower() for keyword in ["error", "failed", "not found"]):
-                        if not line.startswith("Error processing") or "molecule" not in line:
-                            pbar.write(f"⚠️  {line}")
-                    # Look for general progress info
-                    elif "Processing" in line and "PDB IDs" in line:
-                        pbar.write(f"📊 {line}")
-        
-        remaining_stderr = process.stderr.read()
-        if remaining_stderr:
-            stderr_buffer += remaining_stderr
-            while '\n' in stderr_buffer:
-                line, stderr_buffer = stderr_buffer.split('\n', 1)
-                line = line.strip()
-                if line:
-                    pbar.write(f"⚠️ Subprocess: {line}")
-        
-        # Get any stderr output
-        stderr_output = process.stderr.read() if process.stderr else ""
+            updated = False
+
+            # Process stdout
+            try:
+                item = stdout_queue.get_nowait()
+                if item is not None:
+                    process_line(item, pbar, processed_targets, False)
+                    updated = True
+            except queue.Empty:
+                pass
+
+            # Process stderr
+            try:
+                item = stderr_queue.get_nowait()
+                if item is not None:
+                    process_line(item, pbar, processed_targets, True)
+                    updated = True
+            except queue.Empty:
+                pass
+
+            if not updated:
+                time.sleep(0.1)
+
+        # Process has completed - drain remaining output with timeout
+        drain_start = time.time()
+        while (time.time() - drain_start < 10) and (not stdout_queue.empty() or not stderr_queue.empty()):
+            # Drain stdout
+            try:
+                item = stdout_queue.get(timeout=1.0)
+                if item is not None:
+                    process_line(item, pbar, processed_targets, False)
+            except queue.Empty:
+                pass
+
+            # Drain stderr
+            try:
+                item = stderr_queue.get(timeout=1.0)
+                if item is not None:
+                    process_line(item, pbar, processed_targets, True)
+            except queue.Empty:
+                pass
+
+        # Ensure readers have finished (they should put None when done)
+        try:
+            while stdout_queue.get(timeout=0.1) is not None:
+                pass  # Drain any remaining non-None items (shouldn't happen)
+        except queue.Empty:
+            pass
+
+        try:
+            while stderr_queue.get(timeout=0.1) is not None:
+                pass
+        except queue.Empty:
+            pass
+
+        # Wait for threads to finish
+        stdout_thread.join()
+        stderr_thread.join()
+
         pbar.close()
         
         if process.returncode == 0:
@@ -205,16 +223,14 @@ def run_feature_extraction(protein_dir: str, ligand_dir: str, output_dir: str, n
                 print(f"  Processed {len(processed_targets)}/{total_targets} targets")
             return True
         else:
-            print(f"❌ Feature extraction failed:")
-            if stderr_buffer.strip():
-                print(f"  Error: {stderr_buffer.strip()}")
+            print(f"❌ Feature extraction failed with code {process.returncode}")
             return False
                 
     except KeyboardInterrupt:
         print("\n⚠️  Feature extraction interrupted by user")
         if 'process' in locals():
+            process.terminate()
             try:
-                process.terminate()
                 process.wait(timeout=5)
             except:
                 process.kill()
@@ -224,8 +240,8 @@ def run_feature_extraction(protein_dir: str, ligand_dir: str, output_dir: str, n
     except Exception as e:
         print(f"❌ Feature extraction failed: {e}")
         if 'process' in locals():
+            process.terminate()
             try:
-                process.terminate()
                 process.wait(timeout=5)
             except:
                 process.kill()
@@ -636,7 +652,7 @@ Examples:
                        help="Use GPU for prediction if available")
     
     # Output options
-    parser.add_argument('--res-dir', type=str, default="res_vsds_redock_unidock",
+    parser.add_argument('--res-dir', type=str, default="res",
                        help="Results directory for intermediate and final files")
     parser.add_argument('--keep-temp', action='store_true',
                        help="Keep all intermediate files and save results to res-dir")
