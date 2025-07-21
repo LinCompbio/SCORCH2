@@ -177,20 +177,6 @@ compound_id,sc2_ps_score,sc2_pb_score,sc2_score,rank,selected_pose,total_poses
 compound.pdbqt,0.85,0.92,0.87,1,pose1,3
 ```
 
-## Advanced Features
-
-### Feature Extraction (Standalone)
-
-The SCORCH2 feature extraction tool can also be run independently:
-
-```bash
-python SCORCH2/utils/scorch2_feature_extraction.py \
-    --protein-dir /path/to/proteins \
-    --ligand-dir /path/to/ligands \
-    --output-dir /path/to/output \
-    --num-cores 8
-```
-
 #### Feature Extraction Arguments
 - `--output-dir`: Directory to save feature CSV files (required)
 - `--protein-dir`: Directory containing protein PDBQT files (required)
