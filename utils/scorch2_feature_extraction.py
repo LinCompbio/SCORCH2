@@ -26,21 +26,16 @@ import ecif
 from openbabel import pybel
 from rdkit import Chem, RDLogger
 import json
-import dask.dataframe as dd
-import multiprocessing
 from functools import partial
 from binana import PDB
 from multiprocessing import Pool, TimeoutError
 from tqdm import tqdm
-import signal
 from functools import wraps
 from rdkit.ML.Descriptors import MoleculeDescriptors
 from rdkit.Chem import Descriptors
 import glob
 import argparse
 import sys
-from dask.distributed import Client, LocalCluster
-import dask
 
 
 # Mute all RDKit warnings
@@ -85,7 +80,7 @@ def kier_flexibility(ligand_pdbqt_block):
     # List of rdkit descriptors to calculate
     invariant_rdkit_descriptors = [
         'HeavyAtomMolWt','HeavyAtomCount','NumRotatableBonds', 'RingCount', 'NumAromaticRings', 'NumAliphaticRings',
-        'NumSaturatedRings', 'NumHeterocycles', 'NumAromaticHeterocycles',
+        'NumSaturatedRings', 'NumAromaticHeterocycles',
         'NumAliphaticHeterocycles', 'NumSaturatedHeterocycles', 'FractionCSP3',
         'Chi0v', 'Chi1v', 'Chi2v', 'Chi3v', 'Chi4v', 'BalabanJ', 'BertzCT',
         'HallKierAlpha', 'Kappa1', 'Kappa2', 'Kappa3',
@@ -339,7 +334,7 @@ def prune_df_headers(df):
 
 
 
-def process_molecule(molecule, ligand_path, protein_object, pdbid, protein_path):
+def process_molecule(molecule, ligand_path, pdbid, protein_path):
     """
     Process a single ligand molecule file and extract features from all poses.
 
@@ -347,7 +342,6 @@ def process_molecule(molecule, ligand_path, protein_object, pdbid, protein_path)
         molecule: Filename of the ligand file
         ligand_path: Path to the directory containing ligand files
         pdbid: PDB ID being processed
-        protein_object: Protein content from binana PDB object
         protein_path: Path to the protein file
 
     Returns:
@@ -382,7 +376,7 @@ def process_molecule(molecule, ligand_path, protein_object, pdbid, protein_path)
                 entropy_df = pd.DataFrame([rdkit_descriptors])
 
                 # Calculate BINANA features
-                binana_features = run_binana(clean_lines, protein_object)
+                binana_features = run_binana(clean_lines, global_protein_object)
                 binana_df = pd.DataFrame([binana_features])
 
                 # Calculate ECIF features
@@ -461,11 +455,13 @@ def process_pdbid(pdbid, protein_base_path, molecule_path, des_path, num_cores=N
 
     # Read protein content and start processing
     try:
-        with open(protein_path, 'r') as f:
-            protein_content = list(f.readlines())
-            protein_object = PDB()
-            protein_object.load_PDB(protein_path, protein_content)
-            protein_object.assign_secondary_structure()
+        def init_worker(protein_path):
+            global global_protein_object
+            with open(protein_path, 'r') as f:
+                protein_content = f.readlines()
+            global_protein_object = PDB()
+            global_protein_object.load_PDB(protein_path, protein_content)
+            global_protein_object.assign_secondary_structure()
 
         # Determine number of processes to use
         if num_cores is None:
@@ -474,13 +470,12 @@ def process_pdbid(pdbid, protein_base_path, molecule_path, des_path, num_cores=N
             processes = min(num_cores, os.cpu_count())
 
         # Process molecules in parallel
-        with Pool(processes=processes) as pool:
+        with Pool(processes=processes, initializer=init_worker, initargs=(protein_path,)) as pool:
             process_func = partial(
                 process_molecule,
                 ligand_path=molecule_dir,
                 pdbid=pdbid,
-                protein_object=protein_object,
-                protein_path=protein_path
+                protein_path=protein_path  # keep for ECIF
             )
             futures = [pool.apply_async(process_func, (molecule,)) for molecule in molecules]
 
