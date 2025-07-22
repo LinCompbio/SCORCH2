@@ -13,7 +13,7 @@ SCORCH2 offers three principal advantages:
 3. **Target-Agnostic Robustness**: The target-agnostic character provides robust performance on previously unseen targets
 
 <div align="center">
-<img src="main.jpg" width="90%" alt="SCORCH2 Architecture" />
+<img src="SCORCH2.jpg" width="90%" alt="SCORCH2 Architecture" />
 </div>
 
 ## Installation
