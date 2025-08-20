@@ -444,22 +444,27 @@ SCORCH2 is evaluated using standard metrics:
 If SCORCH2 contributes to your research, please cite:
 
 ```bibtex
-@article{Chen2025.03.31.646332,
-    title={SCORCH2: a generalised heterogeneous consensus model for high-enrichment interaction-based virtual screening},
-    author={Chen, Lin and Blay, Vincent and Ballester, Pedro J. and Houston, Douglas R.},
-    journal={bioRxiv},
-    year={2025},
-    doi={10.1101/2025.03.31.646332},
-    publisher={Cold Spring Harbor Laboratory}
+
+@article{SCORCH2,
+author = {L. Chen and V. Blay and P. J. Ballester and D. R. Houston},
+title = {{SCORCH2: A Generalized Heterogeneous Consensus Model for High-Enrichment Interaction-Based Virtual Screening}},
+journal = {Advanced Science},
+year = {2025},
+pages = {e08318},
+doi = {10.1002/advs.202508318},
+url = {https://doi.org/10.1002/advs.202508318}
 }
 
-@article{mcgibbon2023scorch,
-    title={SCORCH: Improving structure-based virtual screening with machine learning classifiers, data augmentation, and uncertainty estimation},
-    author={McGibbon, Miles and Money-Kyrle, Sam and Blay, Vincent and Houston, Douglas R},
-    journal={Journal of Advanced Research},
-    volume={46},
-    pages={135--147},
-    year={2023},
-    publisher={Elsevier}
+@article{SCORCH,
+author = {M. McGibbon and S. Money-Kyrle and V. Blay and D. R. Houston},
+title = {{SCORCH: Improving structure-based virtual screening with machine learning classifiers, data augmentation, and uncertainty estimation}},
+journal = {Journal of Advanced Research},
+year = {2023},
+volume = {46},
+pages = {135-147}
 }
+
+
 ```
+
+
