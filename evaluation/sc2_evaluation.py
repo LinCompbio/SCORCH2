@@ -186,8 +186,12 @@ def run_vs_evaluation(args):
             bedroc = Scoring.CalcBEDROC(feed_df, 0, alpha=80.5)
             
             # Compute classification metrics
-            auc_roc = roc_auc_score(y1, preds)
-            auc_pr = average_precision_score(y1, preds)
+            if args.aggregate:
+                auc_roc = roc_auc_score(result_sorted['Label'].values, result_sorted['Confidence'].values)
+                auc_pr = average_precision_score(result_sorted['Label'].values, result_sorted['Confidence'].values)
+            else:
+                auc_roc = roc_auc_score(y1, preds)
+                auc_pr = average_precision_score(y1, preds)
             
             # Store metrics
             total_metrics['EF_0.5%'].append(ef_dict[0.005])
@@ -444,6 +448,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     main(args)
+
 
 
 
