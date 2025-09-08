@@ -6,12 +6,6 @@
 
 **SCORCH2 (SC2)** is a machine learning rescoring model designed for interaction-based virtual screening. Building upon the foundation of [SCORCH1](https://github.com/SMVDGroup/SCORCH/), SC2 employs two XGBoost models (SC2-PS and SC2-PB) that are trained with distinct datasets to capture local optimal knowledge patterns. Their predictions are combined through a weighted consensus approach to achieve superior active compound enrichment in virtual screening.
 
-SCORCH2 offers three principal advantages:
-
-1. **Superior Decision-Making**: Facilitates enhanced decision-making by focusing on key molecular interactions and fully interpretable features
-2. **Streamlined Screening**: Eliminates the need for preliminary docking pose selection, streamlining the screening process
-3. **Target-Agnostic Robustness**: The target-agnostic character provides robust performance on previously unseen targets
-
 <div align="center">
 <img src="SCORCH2.jpg" width="90%" alt="SCORCH2 Architecture" />
 </div>
