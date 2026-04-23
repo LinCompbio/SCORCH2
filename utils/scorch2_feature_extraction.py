@@ -482,7 +482,7 @@ def process_pdbid(pdbid, protein_base_path, molecule_path, des_path, num_cores=N
             results = []
             for i, future in enumerate(tqdm(futures, desc=f"Processing {pdbid} molecules", leave=False)):
                 try:
-                    result = future.get(timeout=5)  # 5-minute timeout per molecule
+                    result = future.get(timeout=5 * 60)  # 5-minute timeout per molecule
                     if not result.empty:
                         results.append(result)
                 except TimeoutError:
